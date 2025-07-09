@@ -8,7 +8,10 @@ VOLUME /tmp
 WORKDIR /app
 
 # Copy build jar from Maven target
-COPY target/myApp-0.0.1-SNAPSHOT.jar app.jar
+COPY target/ms-edge-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+
 
 # Run the jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

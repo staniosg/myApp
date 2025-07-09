@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MyAppApplication {
+public class EdgeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MyAppApplication.class, args);
+		SpringApplication.run(EdgeApplication.class, args);
 	}
 
 }
