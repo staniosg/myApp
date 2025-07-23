@@ -1,15 +1,18 @@
 package com.example.myApp.config;
 
+import com.example.myApp.messaging.MessagingDispatcher;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.savedrequest.NullRequestCache;
+import com.example.myApp.security.EdgeAuthenticationProvider;
 
 @Configuration
 public class WebSecurityConfig{
@@ -27,7 +30,7 @@ public class WebSecurityConfig{
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("edge/login")
                         .permitAll()
                         .failureHandler((request, response, exception) -> {
                             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -45,9 +48,16 @@ public class WebSecurityConfig{
                         .invalidateHttpSession(true)
                 )
                 // avoid unnecessary redirect
-                .requestCache().requestCache(new NullRequestCache())
+                .requestCache(requestCache -> requestCache
+                        .requestCache(new NullRequestCache())
+                )
                 //.httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider(MessagingDispatcher messagingDispatcher) {
+        return new EdgeAuthenticationProvider(messagingDispatcher);
     }
 }
